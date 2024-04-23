@@ -1,17 +1,17 @@
 module news_test (
-    input [2:0]  coin,
+    input [1:0]  vif_coin,
     output logic clock,
     input        reset,
-    output logic newspaper,
-    output logic change
+    output logic vif_newspaper,
+    output logic vif_change
     );
 
     newstand dut (
-    .coin(coin),
+    .coin(vif_coin),
     .clock(clock),
     .reset(reset),
-    .newspaper(newspaper),
-    .change(change)
+    .newspaper(out_newspaper),
+    .change(out_change)
     );
 
     initial begin

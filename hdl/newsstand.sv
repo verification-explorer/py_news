@@ -1,6 +1,6 @@
 // Desgin the news paper vending machine
 module newstand (
-    input [2:0]  coin,
+    input [1:0]  coin,
     input        clock,
     input        reset,
     output logic newspaper,
@@ -8,7 +8,7 @@ module newstand (
     );
     
     enum bit [2:0] {ST0, ST5, ST10, ST15, ST20} State, Next;
-    enum bit [1:0] {nocoin, nickel, dime} coin_e;
+    enum bit [1:0] {nocoin=2'b00, nickel=2'b01, dime=2'b10} coin_e;
     
     always_ff @(posedge clock, posedge reset)
     if (reset) State <= ST0;
