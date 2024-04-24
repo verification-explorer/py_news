@@ -10,8 +10,8 @@ module news_test (
     .coin(vif_coin),
     .clock(clock),
     .reset(reset),
-    .newspaper(out_newspaper),
-    .change(out_change)
+    .newspaper(vif_newspaper),
+    .change(vif_change)
     );
 
     initial begin
