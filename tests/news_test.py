@@ -8,7 +8,7 @@ import random
 import constraint
 
 
-class CoinGenerator:
+class coin_generator:
     def __init__(self):
         self.p = constraint.Problem()
         self.p.addVariable('coin', [0, 1, 2])
@@ -20,7 +20,7 @@ class CoinGenerator:
         return random.choice(self.solutions)
 
 
-class InputDriver(BusDriver):
+class input_driver(BusDriver):
     _signals = ['coin']
 
     def __init__(self, dut, name, clock):
@@ -31,11 +31,11 @@ class InputDriver(BusDriver):
         await RisingEdge(self.clock)
         self.bus.coin.value = value
         await ReadOnly()
-        await RisingEdge(self.clock)
+        await FallingEdge(self.clock)
         await NextTimeStep()
 
 
-class NewsStandSB(BusMonitor):
+class scb(BusMonitor):
     _signals = ['coin', 'newspaper', 'change']
 
     async def _monitor_recv(self):
@@ -78,13 +78,12 @@ class NewsStandSB(BusMonitor):
 async def news_test(dut):
 
     # Build tb components
-    coindrv = InputDriver(dut, 'vif', dut.clock)
-    NewsStandSB(dut, 'vif', dut.clock)
+    coindrv = input_driver(dut, 'vif', dut.clock)
+    scb(dut, 'vif', dut.clock)
 
     # Create coins stimuli
-    coingen = CoinGenerator()
+    coingen = coin_generator()
     coingen.solve()
-
 
     # Reset the DUT
     coindrv.append(0)
