@@ -5,6 +5,19 @@ from cocotb_coverage.coverage import CoverCross, CoverPoint, coverage_db
 from cocotb_bus.monitors import BusMonitor
 import os
 import random
+import constraint
+
+
+class CoinGenerator:
+    def __init__(self):
+        self.p = constraint.Problem()
+        self.p.addVariable('coin', [0, 1, 2])
+
+    def solve(self):
+        self.solutions = self.p.getSolutions()
+
+    def get(self):
+        return random.choice(self.solutions)
 
 
 class InputDriver(BusDriver):
@@ -61,26 +74,27 @@ class NewsStandSB(BusMonitor):
             assert outputs[state]['newspaper'] == newspaper.integer, "newspaper stand outputs do not match expected"
 
 
-
 @cocotb.test()
 async def news_test(dut):
+
+    # Build tb components
     coindrv = InputDriver(dut, 'vif', dut.clock)
+    NewsStandSB(dut, 'vif', dut.clock)
+
+    # Create coins stimuli
+    coingen = CoinGenerator()
+    coingen.solve()
+
+
+    # Reset the DUT
     coindrv.append(0)
-    await Timer(1, 'ns')
     dut.reset.value = 1
     await RisingEdge(dut.clock)
     dut.reset.value = 0
     await RisingEdge(dut.clock)
-    NewsStandSB(dut, 'vif', dut.clock)
-    await RisingEdge(dut.clock)
-    coindrv.append(1)
-    await RisingEdge(dut.clock)
-    coindrv.append(2)
-    await RisingEdge(dut.clock)
-    await RisingEdge(dut.clock)
-    await RisingEdge(dut.clock)
-    await RisingEdge(dut.clock)
-    await RisingEdge(dut.clock)
-    await RisingEdge(dut.clock)
-    await RisingEdge(dut.clock)
-    await RisingEdge(dut.clock)
+
+    # Insert coins into news paper vend machine
+    for i in range(25):
+        await FallingEdge(dut.clock)
+        coin_sel = coingen.get()
+        coindrv.append(coin_sel['coin'])
