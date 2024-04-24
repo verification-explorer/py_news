@@ -7,7 +7,7 @@ import random
 import constraint
 import os
 
-
+#TODO need to cover also 3 inserts of 5C
 @CoverPoint("top.current_state",
             xf=lambda x, y: x,
             bins=['ST0', 'ST5', 'ST10', 'ST15', 'ST20']
